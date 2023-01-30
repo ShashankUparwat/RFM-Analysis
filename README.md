@@ -3,11 +3,13 @@ RFM Data Analysis in SQL and Tableau
 
 ## SQL Code
 
----Inspecting Data---
+#### Inspecting Data
+```SQL
 SELECT *
 FROM [dbo].[sales_data];
-
----Checking Unique Values---
+```
+#### hecking Unique Values
+```SQL
 SELECT DISTINCT STATUS FROM dbo.sales_data;--------Plot
 
 SELECT DISTINCT YEAR_ID FROM dbo.sales_data;
@@ -15,51 +17,66 @@ SELECT DISTINCT PRODUCTLINE FROM dbo.sales_data;---Plot
 SELECT DISTINCT COUNTRY FROM dbo.sales_data;-------Plot
 SELECT DISTINCT DEALSIZE FROM dbo.sales_data;------Plot
 SELECT DISTINCT TERRITORY FROM dbo.sales_data;-----Plot
+```
 
----Analysis---
+## Analysis
 
----Total sales by Productline---
+### Total sales by Productline
+
+```SQL
 SELECT PRODUCTLINE, SUM(sales) AS Revenue
 FROM [dbo].[sales_data]
 GROUP BY PRODUCTLINE
 ORDER BY 2 DESC;
+```
 
----Total sales by Year---
+#### Total sales by Year
+```SQL
 SELECT YEAR_ID, SUM(sales) AS Revenue
 FROM [dbo].[sales_data]
 GROUP BY YEAR_ID
 ORDER BY 2 DESC;
+```
 
----Operating Months in each Year---
+#### Operating Months in each Year
+```SQL
 SELECT DISTINCT MONTH_ID
 FROM [dbo].[sales_data]
 WHERE YEAR_ID = 2004;
+```
 
----Total Sales by Deal size---
+#### Total Sales by Deal size
+```SQL
 SELECT DEALSIZE, SUM(sales)
 FROM [dbo].[sales_data]
 GROUP BY DEALSIZE
 ORDER BY 2 DESC;
+```
 
----Best month for sale in a specific year and total revenue earned respectively---
+#### Best month for sale in a specific year and total revenue earned respectively
+```SQL
 SELECT MONTH_ID, SUM(sales) as Revenue, COUNT(ORDERNUMBER) AS Total_Orders, SUM(QUANTITYORDERED) AS Quantity
 FROM [dbo].[sales_data]
 WHERE YEAR_ID = 2004---Change Year
 GROUP BY MONTH_ID
 ORDER BY 2 DESC;
+```
 
----November is the most profitable month in the year 2003 and 2004 respectively---
+#### November is the most profitable month in the year 2003 and 2004 respectively
 
----Products sold in November---
+#### Products sold in November
+```SQL
 SELECT MONTH_ID, PRODUCTLINE, SUM(sales), COUNT(ORDERNUMBER) AS Total_Orders, SUM(QUANTITYORDERED) AS Quantity
 FROM [dbo].[sales_data]
 WHERE MONTH_ID = 11 ---Change month
 GROUP BY MONTH_ID, PRODUCTLINE
 ORDER BY 3 DESC;
+```
 
----RFM Analysis---
----Create CTE---
+## RFM Analysis 
 
+#### Create CTE 
+```SQL
 DROP TABLE IF EXISTS #rfm;
 WITH rfm as
 (
@@ -88,11 +105,15 @@ SELECT c.*, rfm_Recency+rfm_Frequency+rfm_Monetary as rfm_cell,
 CAST(rfm_Recency AS varchar)+CAST(rfm_Frequency AS varchar)+CAST(rfm_Monetary AS varchar) AS rfm_cell_string
 INTO #rfm
 FROM rfm_calc AS c
+```
 
----temp table created---
+#### Temporary table created
+```SQL
 SELECT* FROM #rfm
+```
 
----Best Customer Case Scenario---
+#### Best Customer Case Scenario
+```SQL
 SELECT CUSTOMERNAME, rfm_Recency, rfm_Frequency, rfm_Monetary,
 CASE
 WHEN rfm_cell_string IN (111, 112, 121, 122, 123, 132, 211, 212, 114, 141) THEN 'Lost Customer'
@@ -103,23 +124,26 @@ WHEN rfm_cell_string IN (323, 333, 321, 422, 332, 432) THEN 'Active' --- Custome
 WHEN rfm_cell_string IN (433, 434, 443, 444) THEN 'Loyal'
 END rfm_segment
 FROM #rfm
+```
 
-
---- Orders Shipped---
+#### Orders Shipped
+```SQL
 SELECT ORDERNUMBER, COUNT(*) as Total_Items
 FROM [dbo].[sales_data]
 WHERE STATUS = 'Shipped'
 GROUP BY ORDERNUMBER
+```
 
----Products bought by customers---
-
+#### Products bought by customers
+```SQL
 SELECT *
 FROM [dbo].[sales_data]
 WHERE ORDERNUMBER = 10411
 ORDER BY 4 ASC
+```
 
-
----Products sold together---
+#### Products sold together
+```SQL
 SELECT DISTINCT ORDERNUMBER, STUFF(
 
 (SELECT ',' + PRODUCTCODE
@@ -140,3 +164,4 @@ WHERE Total_Items = 2
  1, 1, '') AS Product_Codes
 FROM [dbo].[sales_data] AS S
 ORDER BY 2 DESC
+```
