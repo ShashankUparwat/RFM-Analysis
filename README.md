@@ -165,3 +165,16 @@ WHERE Total_Items = 2
 FROM [dbo].[sales_data] AS S
 ORDER BY 2 DESC
 ```
+
+
+## Tableau Dashboards
+
+#### Dashboard 1
+```Tableau
+https://public.tableau.com/views/SalesDashboard1_16750276362460/SalesDashboard1?:language=en-GB&:display_count=n&:origin=viz_share_link
+```
+
+#### Dashboard 2
+```Tableau
+https://public.tableau.com/views/SalesDashboard1_16750274816340/SalesDashboard2?:language=en-GB&:display_count=n&:origin=viz_share_link
+```
